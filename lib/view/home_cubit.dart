@@ -10,14 +10,16 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => StreamCubit(),
+      create: (context) => StreamCubit()..fetchData("Amman"),
       child: BlocConsumer<StreamCubit, StreamCubitState>(
         listener: (context, state) {},
         builder: (context, state) {
+          print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
           var cubit = StreamCubit.get(context);
           return StreamBuilder<CurrentWeather>(
               stream: cubit.getChangeStreams(),
               builder: (context, snapshot) {
+                print("cccccccccccccccccccccccccccccccccccccccccccc");
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
                     return const Scaffold(

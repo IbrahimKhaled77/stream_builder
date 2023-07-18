@@ -23,28 +23,34 @@ class StreamCubit extends Cubit<StreamCubitState> {
 
 
   }
+  CurrentWeather? dataModel;
+  void fetchData(String city) async {
+    final url =
+        'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=e381772382f359ffed08cbcfab063a2d';
 
-  CurrentWeather?  dataModel;
-  Stream<CurrentWeather> getChangeStreams() async* {
-    var url = Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?q=amman&appid=e381772382f359ffed08cbcfab063a2d');
-    try {
-      var response = await http.get(url);
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
       var  dataBody = json
           .decode(response.body);
 
        dataModel = CurrentWeather.fromJson(dataBody);
-      print(dataModel!.name);
+    emit(StreamCubitSuccessState());
+      print(dataModel!.main!.tempMax!);
+      getChangeStreams();
+
+    } else {
+     emit(StreamCubitErrorState());
+      throw Exception('Failed to fetch data');
+    }
+  }
+
+
+  Stream<CurrentWeather> getChangeStreams() async* {
+
       yield dataModel!;
 
-   //   streamController.sink.add(dataModel);
 
-
-    } catch (error) {
-      print(error);
-       //emit(StreamCubitErrorState());
-
-    }
 
   }
 

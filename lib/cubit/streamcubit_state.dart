@@ -8,9 +8,6 @@ abstract class StreamCubitState {}
 class StreamCubitInitialState extends StreamCubitState {}
 
 class StreamCubitSuccessState extends StreamCubitState {
-  Stream<CurrentWeather> model;
-
-  StreamCubitSuccessState(this.model);
 
 }
 
