@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stream_builder/bloc_observse/bloc_observs.dart';
-import 'package:stream_builder/view/home6_notification.dart';
+
 
 void main() {
   Bloc.observer=const SimpleBlocObserver();
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home66(),
+      home: Home(),
     );
   }
 }
