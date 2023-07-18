@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -7,15 +5,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stream_builder/cubit_statful/statful_state.dart';
 import 'package:http/http.dart' as http;
 import 'package:stream_builder/model/model_api.dart';
+
+import '../core/notifications.dart';
+
 class StatefulCubit extends Cubit<StatefulState> {
   StatefulCubit() : super(StatefulInitial());
 
-  static StatefulCubit get(context)=>BlocProvider.of(context);
+  static StatefulCubit get(context) => BlocProvider.of(context);
 
   CurrentWeather? model;
   Timer? timer;
   void initState() {
-
     fetchData('Amman').then((data) {
       model = data;
     });
@@ -23,18 +23,19 @@ class StatefulCubit extends Cubit<StatefulState> {
     // Set up a timer to fetch data every 5 minutes
     timer = Timer.periodic(const Duration(minutes: 2), (Timer t) {
       fetchData('Amman').then((data) {
+        if (model?.main?.temp != data.main?.temp) {
+          final notificationService = NotificationServices();
+          notificationService.showNotification(
+              id: 1, title: "اشعار تغير الحراره", body: "لقد تغيرت الحراره");
+        }
         model = data;
-
       });
     });
   }
 
   void dispose() {
     timer?.cancel(); // Cancel the timer when the widget is disposed
-
   }
-
-
 
   Future<CurrentWeather> fetchData(String city) async {
     final url =
@@ -43,10 +44,9 @@ class StatefulCubit extends Cubit<StatefulState> {
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      var  dataBody = json
-          .decode(response.body);
+      var dataBody = json.decode(response.body);
 
-      CurrentWeather  dataModel = CurrentWeather.fromJson(dataBody);
+      CurrentWeather dataModel = CurrentWeather.fromJson(dataBody);
       emit(StatefulSuccessState());
       print(dataModel.main!.tempMax!);
       return dataModel;
@@ -55,9 +55,4 @@ class StatefulCubit extends Cubit<StatefulState> {
       throw Exception('Failed to fetch data');
     }
   }
-
-
-
-
-
 }
